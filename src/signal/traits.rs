@@ -6,5 +6,5 @@ pub trait Slot<F> {
 }
 
 pub trait Signal<T, A: Copy> {
-    fn fire(&self, state: Rc<RefCell<T>>, args: A);
+    fn fire(&mut self, state: Rc<RefCell<T>>, args: A);
 }
