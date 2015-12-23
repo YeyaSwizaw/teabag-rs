@@ -1,0 +1,9 @@
+[package]
+name = "teabag"
+version = "0.1.0"
+authors = ["Samuel Sleight <samuel.sleight@gmail.com>"]
+
+[dependencies]
+libc = "*"
+gl = "*"
+glutin = "*"
