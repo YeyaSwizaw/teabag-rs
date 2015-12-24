@@ -5,3 +5,4 @@ extern crate libc;
 pub mod signal;
 pub mod keyboard;
 pub mod game;
+pub mod error;

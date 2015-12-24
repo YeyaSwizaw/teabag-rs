@@ -17,7 +17,6 @@ fn main() {
 
     let x_ref_a = x.clone();
     let x_ref_b = x.clone();
-    let local = x.clone();
 
     let game = Game::new();
     game.with_signals(|signals| {
@@ -48,8 +47,8 @@ fn main() {
         });
     });
 
-    game.run();
+    println!("{:?}", game.run());
 
-    let x = local.borrow();
+    let x = x.borrow();
     println!("Final Total: {}", *x);
 }

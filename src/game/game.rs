@@ -2,6 +2,7 @@ use ::game::State;
 use ::game::signal::GameSignals;
 use ::signal::Signal;
 use ::keyboard::Key;
+use ::error::Error;
 
 use std::os;
 use std::rc::Rc;
@@ -33,11 +34,20 @@ impl Game {
         f(&mut self.signals.borrow_mut())
     }
 
-    pub fn run(self) {
-        let window = glutin::Window::new().unwrap();
+    pub fn run(self) -> Result<(), Error> {
+        let window = match glutin::WindowBuilder::new()
+            .with_dimensions(800, 600)
+            .with_title("Teabag".to_owned())
+            .build_strict() {
+
+            Ok(window) => window,
+            Err(e) => return Err(Error::WindowCreationError(e))
+        };
 
         unsafe {
-            window.make_current();
+            if let Err(e) = window.make_current() {
+                return Err(Error::OpenGLContextError(e));
+            }
 
             gl::load_with(|symbol| window.get_proc_address(symbol) as *const os::raw::c_void);
             gl::ClearColor(0.0, 1.0, 0.0, 1.0);
@@ -48,7 +58,9 @@ impl Game {
 
         for event in window.wait_events() {
             unsafe { gl::Clear(gl::COLOR_BUFFER_BIT) };
-            window.swap_buffers();
+            if let Err(e) = window.swap_buffers() {
+                return Err(Error::OpenGLContextError(e));
+            }
 
             match event {
                 glutin::Event::Closed => signals.close.fire(state.clone(), ()),
@@ -69,5 +81,7 @@ impl Game {
                 break
             }
         }
+
+        Ok(())
     }
 }
